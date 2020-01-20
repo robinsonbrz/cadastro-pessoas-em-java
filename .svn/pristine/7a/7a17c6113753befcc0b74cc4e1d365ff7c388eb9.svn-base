@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+  	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/materialize/css/materialize.min.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="/materialize/css/personalizado.css"  media="screen,projection"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Cadastro Pessoa</title>
+</head>
+<body>
+
+
+
+
+
+	<h4>Cadastro de Pessoas</h4>
+				<div class="col s2 input-field" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CAIXA')">
+						<label class="active" for="idade">Voce visualiza esta linha somente por ter perfil caixa ou admin</label>
+				</div>
+				</br>
+				
+	
+		<a class="waves-light btn blue" href="/">Inicio</a>
+		<a class="waves-light btn red"  href="/logout">Logout</a>
+		<br />
+		<br />
+			<div th:each = "m : ${msg}" class="error" >
+				<span th:text = "${m}"></span>
+			</div>
+		
+		<br />
+		
+		
+		<div class="container">
+
+	<form action="salvarpessoa" id="formpessoa" method="post" th:object="${pessoaobj}">
+			<div class="row">
+				<div class="col s1 input-field">
+					<input type="text" name="id" id="id" th:field="*{id}" readonly="readonly"/> 
+					<label class="active" for="id">Id</label>
+				</div>
+				<div class="col s4 input-field">
+					<input type="text" name="nome" id="nome" th:field="*{nome}"/> 
+					<label class="active" for="nome">Nome</label>
+				</div>
+				<div class="col s5 input-field">
+					<input type="text" name="sobrenome" id="sobrenome" th:field="*{sobrenome}" /> 
+					<label class="active" for="sobrenome">Sobrenome</label>
+				</div>
+
+				<div class="col s2 input-field" sec:authorize="hasRole('ROLE_ADMIN')">
+					<input type="text" name="idade" id="idade" th:field="*{idade}" /> 
+					<label class="active" for="idade">Idade2</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class ="col input-field s3">
+			
+					<input class="waves-light btn blue" type="submit" value="salvar" />
+				</div>
+				<div class ="col input-field s3">
+			
+					<button class="waves-light btn blue" onclick="document.getElementById('formpessoa').reset();">Novo</button>
+				</div>
+			</div>
+	</form>
+
+
+		<table class="striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>NOME</th>
+					<th>SOBRENOME</th>
+					<div sec:authorize="hasRole('ROLE_ADMIN')">
+					<th>IDADE</th>
+					</div>
+					<th>TELEFONE</th>
+					<th>EDITAR</th>
+					<th>EXCLUIR</th>
+				</tr>
+			</thead>
+
+			<tr th:each="pessoa : ${pessoas}">
+				<td th:text="${pessoa.id}"></td>
+				<td th:text="${pessoa.nome}"></td>
+				<td th:text="${pessoa.sobrenome}"></td>
+				<div sec:authorize="hasRole('ROLE_ADMIN')"><td th:text="${pessoa.idade}"></td></div>
+				<td><a class="small " th:href="@{/telefones/{idpessoa}(idpessoa=${pessoa.id})}">Telefone</a></td>
+				<td><a class="small " th:href="@{/editarpessoa/{idpessoa}(idpessoa=${pessoa.id})}">Editar</a></td>
+				<td><a class="small " th:href="@{/removerpessoa/{idpessoa}(idpessoa=${pessoa.id})}">Excluir</a></td>
+				
+				
+				
+			</tr>
+		</table>
+
+	<form action="pesquisarpessoa" method="post" >
+			<div class="row ">
+
+				<div class="col s4 input-field">
+					<input type="text" name="nomepesquisa" id="nomepesquisa" class="validate"/> 
+					<label class="active" for="nomepesquisa">Busca Nome</label>
+				</div>
+				<div class="col s4 input-field">
+					<input class="waves-light btn green" type="submit" value="Buscar" />
+				</div>
+				<div class="col s4 input-field">
+					<a class="waves-light btn green" href="/listapessoas">Todos</a>
+				</div>
+				
+				
+			</div>
+	</form>
+		</div>
+
+
+
+
+
+	<script src="/materialize/js/materialize.min.js"></script>
+	    <!-- Compiled and minified JavaScript -->
+
+</body>
+</html>

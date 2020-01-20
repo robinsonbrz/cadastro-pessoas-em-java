@@ -1,0 +1,229 @@
+package curso.springboot.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import curso.springboot.model.Pessoa;
+import curso.springboot.model.Telefone;
+import curso.springboot.repository.PessoaRepository;
+import curso.springboot.repository.TelefoneRepository;
+
+@Controller
+public class PessoaController {
+	
+	@Autowired
+	private PessoaRepository pessoaRepository; 
+	
+	@Autowired
+	private TelefoneRepository telefoneRepository;
+
+	@RequestMapping(method=RequestMethod.GET, value = "/cadastropessoa")
+	public ModelAndView inicio() {
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+		modelAndView.addObject("pessoaobj",new Pessoa());
+		
+		Iterable<Pessoa> pessoasIt = pessoaRepository.findAll();
+		modelAndView.addObject("pessoas", pessoasIt);
+		
+		return modelAndView;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value="**/salvarpessoa")
+	// @Valid para receptar Erros em bindingResult
+	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+		Iterable<Pessoa> pessoasIt = pessoaRepository.findAll();
+		
+
+		
+		// trata erros de validações de campo da classe pessoa
+		// anotações @notEmpty notNull
+		if (bindingResult.hasErrors()) {
+			modelAndView.addObject("pessoaobj", new Pessoa());
+			modelAndView.addObject("pessoas", pessoasIt);
+			
+			List<String> msg = new ArrayList<String>();
+			for(ObjectError objectError : bindingResult.getAllErrors()) {
+				// anotações @notEmpty notNull trazem erros para binding result
+				msg.add(objectError.getDefaultMessage());
+			}
+			
+			return modelAndView.addObject("msg", msg);	
+		}
+		
+		pessoaRepository.save(pessoa);
+		
+		modelAndView.addObject("pessoaobj", new Pessoa());
+		modelAndView.addObject("pessoas", pessoasIt);
+			
+		return modelAndView;		
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value = "/listapessoas")
+	public ModelAndView pessoas() {
+		
+		ModelAndView andView = new ModelAndView("cadastro/cadastropessoa");
+		andView.addObject("pessoaobj", new Pessoa());
+
+		Iterable<Pessoa> pessoasIt = pessoaRepository.findAll();
+		andView.addObject("pessoas", pessoasIt);
+		
+		return andView;
+	}
+	
+	@GetMapping("/editarpessoa/{idpessoa}")
+	public ModelAndView editar(@PathVariable("idpessoa") Long idpessoa) {
+		
+		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+		modelAndView.addObject("pessoaobj",pessoa.get());
+		
+		return modelAndView;	
+	}
+	
+	@GetMapping("/removerpessoa/{idpessoa}")
+	public ModelAndView excluir(@PathVariable("idpessoa") Long idpessoa) {
+		
+		pessoaRepository.deleteById(idpessoa);
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+		modelAndView.addObject("pessoaobj", new Pessoa());
+		
+		modelAndView.addObject("pessoas", pessoaRepository.findAll());
+
+		return modelAndView;	
+	}
+
+	@PostMapping("**/pesquisarpessoa")
+	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa) {
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+		modelAndView.addObject("pessoaobj", new Pessoa());
+		
+		// retrorna para o model and view pessoas da pesquisa
+		modelAndView.addObject("pessoas", pessoaRepository.findPessoaByName(nomepesquisa));
+		return modelAndView;
+	}
+
+	@GetMapping("/telefones/{idpessoa}")
+	public ModelAndView telefones(@PathVariable("idpessoa") Long idpessoa) {
+		
+		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
+		modelAndView.addObject("pessoaobj",pessoa.get());
+		
+		//retrorna para o model and view telefones da pessoa
+		// query é montada em telefoneRepository
+		modelAndView.addObject("telefones", telefoneRepository.getTelefones(idpessoa));
+		return modelAndView;	
+	}
+	
+	
+	
+	
+
+
+		
+
+	
+	
+	
+	@PostMapping("**/addfonePessoa/{pessoaid}")
+	public ModelAndView addFonePessoa( Telefone telefone, 
+									@PathVariable("pessoaid") Long pessoaid) {
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
+		Pessoa pessoa = pessoaRepository.findById(pessoaid).get();
+		
+		if(telefone != null && telefone.getNumero().isEmpty() || telefone.getNumero().isEmpty())  {
+			
+			modelAndView.addObject("pessoaobj", pessoa);
+			modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoaid));
+			List<String> msg = new ArrayList<String>();
+			
+			if( telefone.getNumero().isEmpty() ) {
+				msg.add("Número de telefone deve ser informado!");
+			}
+			if( telefone.getTipo().isEmpty() ) {
+				msg.add("Tipo de telefone deve ser informado!");
+			}
+			
+			modelAndView.addObject("msg" , msg);
+			
+			return modelAndView;	
+		}
+		
+		
+		telefone.setPessoa(pessoa);
+	
+		telefoneRepository.save(telefone);
+		
+		modelAndView.addObject("pessoaobj", pessoa);
+		modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoaid));
+		
+		return modelAndView;	
+	
+	}
+
+	@GetMapping("/removertelefone/{idtelefone}")
+	public ModelAndView excluirTelefone(@PathVariable("idtelefone") Long idtelefone) {
+		
+		// Aramzena referencia do objeto pessoa antes da deleção
+		Pessoa pessoa = telefoneRepository.findById(idtelefone).get().getPessoa();
+		
+		// Deleta telefone pelo repository
+		telefoneRepository.deleteById(idtelefone);
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
+		
+		// disponibiliza em "pessoaobj" dados de pessoa para reexibição da tela que foi salvo antes da deleção
+		modelAndView.addObject("pessoaobj", pessoa);
+		// disponibiliza em "telefones" da pessoaId para reexibição da tela 
+		modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoa.getId()));
+
+		return modelAndView;	
+	}
+	
+	
+	
+	@GetMapping("/editartelefone/{idtelefone}")
+	public ModelAndView editarTelefone(@PathVariable("idtelefone") Long idtelefone) {
+		
+		// Aramzena referencia do objeto pessoa antes da edição
+		Pessoa pessoa = telefoneRepository.findById(idtelefone).get().getPessoa();
+		
+		Optional<Telefone> telefone = telefoneRepository.findById(idtelefone);
+		
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
+		modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoa.getId()));
+		
+		modelAndView.addObject("telefoneobj",telefone.get());
+		
+		// disponibiliza em "pessoaobj" dados de pessoa para reexibição da tela que foi salvo antes da edição
+		modelAndView.addObject("pessoaobj", pessoa);
+		
+		return modelAndView;	
+	}
+	
+	
+	
+}
