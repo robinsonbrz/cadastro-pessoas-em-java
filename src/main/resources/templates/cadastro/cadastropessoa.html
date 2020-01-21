@@ -15,24 +15,15 @@
 <body>
 
 
-
-
-
-
 	<h4>Cadastro de Pessoas</h4>
 				<div class="col s2 input-field" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CAIXA')">
 						<label class="active" for="idade">Voce visualiza esta linha somente por ter perfil caixa ou admin</label>
 						</br>
 				</div>
-			
-
-
-
+		
 		<a class="waves-light btn blue" href="/">Inicio</a>
 		<a class="waves-light btn red"  href="/logout"  th:text="'Logout ' + ${#authentication.getPrincipal().getUsername()}" >Logout</a>
 		
-
-
 		<br />
 		<br />
 			<div th:each = "m : ${msg}" class="error" >

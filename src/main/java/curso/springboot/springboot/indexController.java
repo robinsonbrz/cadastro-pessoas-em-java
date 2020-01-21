@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class indexController {
 	
-	@RequestMapping
+	@RequestMapping(value = "/")
 	public String index() {
 		//pode processar qualquer coisa antes de enviar para pagina index
-		
+		System.out.println("Controller index /");
 		return "index";
 	}
 }

@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -24,14 +24,19 @@ public class WebConfigSecurity extends 	WebSecurityConfigurerAdapter{
 		http.csrf()
 			.disable()  // Desativa as config padrao de memoria
 			.authorizeRequests()	// permitir restringir acessos
-			.antMatchers(HttpMethod.GET, "/").permitAll() // Qualquer usuario acessa
+			.antMatchers(HttpMethod.GET, "/").permitAll() 				// Qualquer usuario acessa
+			//.antMatchers( "/cadastropessoa").permitAll() 				// Qualquer usuario acessa
+			.antMatchers( "/cadastrologin").permitAll() 				// Qualquer usuario acessa
+			.antMatchers( "/salvaNovoLogin").permitAll() 				// Qualquer usuario acessa
 			//.antMatchers(HttpMethod.GET, "/cadastropessoa").hasAnyRole("ADMIN")// 
 			.anyRequest().authenticated()
-			.and().formLogin().permitAll()  // permite qualquer usuario
+		.and()
+			.formLogin().permitAll()  // permite qualquer usuario
 			.loginPage("/login")
-			.defaultSuccessUrl("/cadastropessoa")
+			.defaultSuccessUrl("/")    // original .defaultSuccessUrl("/cadastropessoa")
 			.failureUrl("/login?error=true")
-			.and().logout().logoutSuccessUrl("/login") 				// Mapeia URL de Logout e invalida usuario autenticado
+		.and()
+			.logout().logoutSuccessUrl("/login") 				// Mapeia URL de Logout e invalida usuario autenticado
 			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
 	}
 	
@@ -51,7 +56,9 @@ public class WebConfigSecurity extends 	WebSecurityConfigurerAdapter{
 	@Override	// permite acesso a pastas do materialize mesmo sem login. Devido a CSS e Javascript
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/materialize/**");
-
+		web.ignoring().antMatchers("cadastro/cadastrologin.html");
+		web.ignoring().antMatchers("/cadastro/cadastrologin.html");
+		web.ignoring().antMatchers("**/cadastrologin.html");
 	}
 	
 	

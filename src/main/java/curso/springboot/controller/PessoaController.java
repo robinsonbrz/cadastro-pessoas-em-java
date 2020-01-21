@@ -145,8 +145,7 @@ public class PessoaController {
 	
 	
 	@PostMapping("**/addfonePessoa/{pessoaid}")
-	public ModelAndView addFonePessoa( Telefone telefone, 
-									@PathVariable("pessoaid") Long pessoaid) {
+	public ModelAndView addFonePessoa( Telefone telefone, @PathVariable("pessoaid") Long pessoaid) {
 		
 		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 		Pessoa pessoa = pessoaRepository.findById(pessoaid).get();

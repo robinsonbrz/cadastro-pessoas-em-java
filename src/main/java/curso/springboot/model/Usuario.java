@@ -14,6 +14,9 @@ import javax.persistence.JoinColumn ;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Entity 	// Anotação força JPA a estanciar na tabela de banco de dados
 public class Usuario implements UserDetails{
@@ -26,7 +29,10 @@ public class Usuario implements UserDetails{
 	
 	private String login;
 	private String senha;
+	private String email;
 	
+	
+
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuarios_role",	
 		joinColumns = @JoinColumn(name = "usuario_id", 
@@ -39,6 +45,14 @@ public class Usuario implements UserDetails{
 	
 	private List<Role> roles;
 	
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 	public Long getId() {
 		return id;
@@ -60,8 +74,18 @@ public class Usuario implements UserDetails{
 		return senha;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public void setSenha(String senha) {
-		this.senha = senha;
+		// Codifica a senha para salvar no banco de dados
+		BCryptPasswordEncoder codificador = new BCryptPasswordEncoder();
+		this.senha = codificador.encode(senha);
 	}
 
 	@Override
@@ -99,6 +123,8 @@ public class Usuario implements UserDetails{
 	public boolean isEnabled() {
 		return true;
 	}
+
+
 	
 	
 

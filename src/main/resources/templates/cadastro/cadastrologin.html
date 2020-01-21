@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/materialize/css/materialize.min.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="/materialize/css/personalizado.css"  media="screen,projection"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+<title>Cadastro Telefones</title>
+</head>
+<body>
+	<div class="container">
+
+
+	<h4>Cadastro de Login</h4>
+	
+		<a class="waves-light btn blue" href="/">Inicio</a>
+	
+	<!-- 	<a class="waves-light btn red"  href="/logout"  th:text="'Logout ' + ${#authentication.getPrincipal().getUsername()}" >Logout</a> -->
+
+		<br />
+		
+		<form action="salvaNovoLogin" 	 method="post" >
+
+	
+
+					<label class="active" for="email">Email:</label> 
+					<input type="text" id="email" name="email" class="validate">
+	
+
+					<label class="active" for="role">Role:</label> 
+					<input type="text" id="role" name="role" class="validate">
+
+
+					<label class="active" for="login">Login:</label> 
+					<input type="text" id="login" name="login" class="validate">
+
+
+					<label class="active" for="senha">Senha:</label> 
+					<input type="text" id="senha" name="senha" class="validate">
+
+
+
+
+
+			<input  type="submit" value="Adicionar Usuario" class="waves-light btn green" ></input>
+			
+		</form>
+		</div>
+		
+		</div>		
+		
+<script type="text/javascript" src="/materialize/js/materialize.min.js"></script>
+	    <!-- Compiled and minified JavaScript -->
+
+	
+</body>
+</html>
