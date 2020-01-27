@@ -1,6 +1,5 @@
 package curso.springboot.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,9 +47,6 @@ public class Usuario implements UserDetails{
 	
 
 	public List<Role> getRoles() {
-		if (this.roles == null) {
-			this.roles = new ArrayList<Role>();
-		}
 		return roles;
 	}
 

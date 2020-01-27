@@ -21,6 +21,8 @@ public class Role  implements GrantedAuthority{
 	
 	private String nomeRole;
 	
+
+
 	public String getNomeRole() {
 		return nomeRole;
 	}

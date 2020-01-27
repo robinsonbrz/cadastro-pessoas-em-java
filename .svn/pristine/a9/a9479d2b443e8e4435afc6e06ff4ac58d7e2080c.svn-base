@@ -1,6 +1,5 @@
 package curso.springboot.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,28 +29,8 @@ public class LoginController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "salvaNovoLogin")
 	public String salvaNovoLogin( Usuario usuario, BindingResult bindingResult) {
-		//todo receber um array de roles
-		//Role role = roleRepository.findById(1L).get();
-		
-		//List<Role> listRole = new ArrayList<Role>();
-		
-		//listRole.add(usuario.getRoles());
-		//usuario.getRoles()
-		//usuario.getRoles().addAll(listRole);
-		
-		System.out.println("#################");
-		System.out.println("#################");
-		System.out.println("#################");
-		System.out.println("#################");
-		System.out.println("#################");
-		System.out.println("#################");
-			
-		System.out.println(usuario.getRoles());
-		
-
-		
 		usuarioRepository.save(usuario);
-
+		    System.out.println(usuario.getId());
 		return "login";
 	}
 	

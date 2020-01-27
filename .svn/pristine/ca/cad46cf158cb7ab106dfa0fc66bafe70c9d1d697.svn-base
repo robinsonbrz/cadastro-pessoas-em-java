@@ -28,7 +28,6 @@ public class WebConfigSecurity extends 	WebSecurityConfigurerAdapter{
 			//.antMatchers( "/cadastropessoa").permitAll() 				// Qualquer usuario acessa
 			.antMatchers( "/cadastrologin").permitAll() 				// Qualquer usuario acessa
 			.antMatchers( "/salvaNovoLogin").permitAll() 				// Qualquer usuario acessa
-			.antMatchers( "/footergeral.html").permitAll() 				// Qualquer usuario acessa
 			//.antMatchers(HttpMethod.GET, "/cadastropessoa").hasAnyRole("ADMIN")// 
 			.anyRequest().authenticated()
 		.and()
@@ -57,14 +56,9 @@ public class WebConfigSecurity extends 	WebSecurityConfigurerAdapter{
 	@Override	// permite acesso a pastas do materialize mesmo sem login. Devido a CSS e Javascript
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/materialize/**");
-		//web.ignoring().antMatchers("/htmlpermitidos/**");
-		//web.ignoring().antMatchers("/cadastro/cadastrologin.html");
-
-		//web.ignoring().antMatchers("**/cadastrologin.html");
-		
-		//web.ignoring().antMatchers("**/footergeral.html");
-		//web.ignoring().antMatchers("/footergeral.html");
-		
+		web.ignoring().antMatchers("cadastro/cadastrologin.html");
+		web.ignoring().antMatchers("/cadastro/cadastrologin.html");
+		web.ignoring().antMatchers("**/cadastrologin.html");
 	}
 	
 	
