@@ -43,8 +43,7 @@ public class LoginController {
 		System.out.println("#################");
 		System.out.println("#################");
 		System.out.println("#################");
-		System.out.println("#################");
-		System.out.println("#################");
+
 			
 		System.out.println(usuario.getRoles());
 		
