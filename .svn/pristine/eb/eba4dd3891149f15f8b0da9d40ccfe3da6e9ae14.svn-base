@@ -1,0 +1,72 @@
+package curso.springboot.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+@Configuration
+@EnableWebSecurity
+public class WebConfigSecurity extends 	WebSecurityConfigurerAdapter{
+	
+	@Autowired
+	private ImplementacaoUserDetailService implementacaoUserDetailService;
+	
+	@Override  // Configura as solicitações de acesso por Http
+	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf()
+			.disable()  // Desativa as config padrao de memoria
+			.authorizeRequests()	// permitir restringir acessos
+			.antMatchers(HttpMethod.GET, "/").permitAll() 				// Qualquer usuario acessa
+			//.antMatchers( "/cadastropessoa").permitAll() 				// Qualquer usuario acessa
+			.antMatchers( "/cadastrologin").permitAll() 				// Qualquer usuario acessa
+			.antMatchers( "/salvaNovoLogin").permitAll() 				// Qualquer usuario acessa
+			.antMatchers( "/footergeral.html").permitAll() 				// Qualquer usuario acessa
+			//.antMatchers(HttpMethod.GET, "/cadastropessoa").hasAnyRole("ADMIN")// 
+			.anyRequest().authenticated()
+		.and()
+			.formLogin().permitAll()  // permite qualquer usuario
+			.loginPage("/login")
+			.defaultSuccessUrl("/")    // original .defaultSuccessUrl("/cadastropessoa")
+			.failureUrl("/login?error=true")
+		.and()
+			.logout().logoutSuccessUrl("/login") 				// Mapeia URL de Logout e invalida usuario autenticado
+			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
+	}
+	
+	@Override	// Cria autenticação do usuário com bancop de dados ou em memoria
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		
+		auth.userDetailsService(implementacaoUserDetailService)
+		.passwordEncoder(new BCryptPasswordEncoder());
+		
+		/* teste de senha em memoria antes de fazer em banco de dados
+		auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+		.withUser("rob")
+		.password("$2a$10$YSmy7gw5l7bZjmoPpI87p.eSel9ixEIxWi6lCR2fej3zHDIOFB6Oy")
+		.roles("ADMIN");  */
+	}
+	
+	@Override	// permite acesso a pastas do materialize mesmo sem login. Devido a CSS e Javascript
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/materialize/**");
+		//web.ignoring().antMatchers("/htmlpermitidos/**");
+		//web.ignoring().antMatchers("/cadastro/cadastrologin.html");
+
+		//web.ignoring().antMatchers("**/cadastrologin.html");
+		
+		//web.ignoring().antMatchers("**/footergeral.html");
+		//web.ignoring().antMatchers("/footergeral.html");
+		
+	}
+	
+	
+	
+}
